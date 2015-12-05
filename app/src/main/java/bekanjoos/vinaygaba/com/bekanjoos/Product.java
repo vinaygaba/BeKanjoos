@@ -10,6 +10,14 @@ public class Product {
     String imageUrl;
     String productId;
 
+
+    public Product(String productName, String price, String website, String imageUrl) {
+        this.productName = productName;
+        this.price = price;
+        this.website = website;
+        this.imageUrl = imageUrl;
+    }
+
     public Product(String productId) {
         this.productId = productId;
     }
@@ -21,13 +29,6 @@ public class Product {
 
     public void setProductId(String productId) {
         this.productId = productId;
-    }
-
-    public Product(String productName, String price, String website, String imageUrl) {
-        this.productName = productName;
-        this.price = price;
-        this.website = website;
-        this.imageUrl = imageUrl;
     }
 
     public String getProductName() {

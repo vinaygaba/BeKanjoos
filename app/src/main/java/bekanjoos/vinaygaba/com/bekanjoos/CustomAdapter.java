@@ -18,6 +18,7 @@ import java.util.ArrayList;
 class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder> {
     private ArrayList<Product> productList;
     Context context;
+    MainActivity.ItemClickListener itemClickListener;
 
     // Provide a reference to the views for each data item
     // Complex data items may need more than one view per item, and
@@ -39,6 +40,7 @@ class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder> {
     public CustomAdapter(ArrayList<Product> productList, Context context) {
         this.productList = productList;
         this.context = context;
+        itemClickListener = new MainActivity.ItemClickListener(context);
     }
 
     // Create new views (invoked by the layout manager)
@@ -48,6 +50,8 @@ class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder> {
         // create a new view
         View v = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.item_row, parent, false);
+
+        v.setOnClickListener(itemClickListener);
         // set the view's size, margins, paddings and layout parameters
 
         ViewHolder vh = new ViewHolder(v);

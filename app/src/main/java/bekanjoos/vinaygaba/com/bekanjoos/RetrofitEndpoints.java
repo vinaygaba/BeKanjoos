@@ -1,5 +1,6 @@
 package bekanjoos.vinaygaba.com.bekanjoos;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import retrofit.Call;
@@ -18,11 +19,11 @@ public interface RetrofitEndpoints {
     // Callback for the parsed response is the last parameter
 
     @GET("/api/products")
-    Call<List<Product>> getProducts(@Query("email") String email);
+    Call<ArrayList<Product>> getProducts(@Query("email") String email);
 
     @POST("/api/product")
     Call<String> addProduct(@Body Product product);
 
     @DELETE("/api/product")
-    Call<String> deleteProduct(@Body Product product);
+    Call<String> deleteProduct(@Query("product_id") String productId);
 }
