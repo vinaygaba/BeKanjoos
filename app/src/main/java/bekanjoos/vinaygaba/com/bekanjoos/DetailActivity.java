@@ -8,10 +8,14 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.db.chart.Tools;
 import com.db.chart.model.LineSet;
@@ -21,6 +25,7 @@ import com.db.chart.view.LineChartView;
 import com.db.chart.view.Tooltip;
 import com.db.chart.view.animation.Animation;
 import com.db.chart.view.animation.style.DashAnimation;
+import com.squareup.picasso.Picasso;
 
 
 public class DetailActivity extends AppCompatActivity {
@@ -31,9 +36,11 @@ public class DetailActivity extends AppCompatActivity {
     private boolean mUpdateOne;
     private final String[] mLabelsOne= {"", "10-15", "", "15-20", "", "20-25", "", "25-30", "", "30-35", ""};
     private final float[][] mValuesOne = {{3.5f, 4.7f, 4.3f, 8f, 6.5f, 10f, 7f, 8.3f, 7.0f, 7.3f, 5f}};
+    private String productName,productId,website,price,imageUrl;
+    private TextView productNameTv,priceTv,websiteTv;
+    private ImageView squareImageView;
 
-
-    /** Second chart */
+    /** Second chart
     private LineChartView mChartTwo;
     private ImageButton mPlayTwo;
     private boolean mUpdateTwo;
@@ -49,14 +56,14 @@ public class DetailActivity extends AppCompatActivity {
                     85f, 85f, 85f, 85f, 85f, 85f, 85f, 85f, 85f, 85f, 85f, 85f, 85f, 85f, 85f, 85f, 85f, 85f, 85f}};
 
 
-    /** Third chart */
+    /** Third chart
     private LineChartView mChartThree;
     private ImageButton mPlayThree;
     private boolean mUpdateThree;
     private final String[] mLabelsThree= {"00", "04", "08", "12", "16", "20", "24"};
     private final float[][] mValuesThree = {  {4.5f, 5.7f, 4f, 8f, 2.5f, 3f, 6.5f},
             {1.5f, 2.5f, 1.5f, 5f, 5.5f, 5.5f, 3f},
-            {8f, 7.5f, 7.8f, 1.5f, 8f, 8f, .5f}};
+            {8f, 7.5f, 7.8f, 1.5f, 8f, 8f, .5f}};*/
 
 
 
@@ -64,6 +71,22 @@ public class DetailActivity extends AppCompatActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        Bundle extras = getIntent().getExtras();
+        if (extras != null) {
+            productName = extras.getString("product_name");
+            price = extras.getString("price");
+            imageUrl = extras.getString("image");
+            website = extras.getString("website");
+            Log.e("Website",website);
+            productId = extras.getString("product_id");
+        }
+
+
         // Init first chart
         mUpdateOne = true;
         mChartOne = (LineChartView) findViewById(R.id.linechart1);
@@ -80,37 +103,19 @@ public class DetailActivity extends AppCompatActivity {
             }
         });
 
-        // Init second chart
-        /*mUpdateTwo = true;
-        mChartTwo = (LineChartView) findViewById(R.id.linechart2);
-        mPlayTwo = (ImageButton)findViewById(R.id.play2);
-        mPlayTwo.setOnClickListener(new View.OnClickListener(){
+        productNameTv = (TextView)findViewById(R.id.productName);
+        priceTv = (TextView)findViewById(R.id.price);
+        websiteTv = (TextView)findViewById(R.id.website);
+        squareImageView = (ImageView)findViewById(R.id.squareImageView);
 
-            @Override
-            public void onClick(View v) {
-                if(mUpdateTwo)
-                    updateChart(1, mChartTwo, mPlayTwo);
-                else
-                    dismissChart(1, mChartTwo, mPlayTwo);
-                mUpdateTwo = !mUpdateTwo;
-            }
-        });*/
+        productNameTv.setText(productName);
+        priceTv.setText(price);
+        websiteTv.setText(website);
 
-        // Init third chart
-        /*mUpdateThree = true;
-        mChartThree = (LineChartView) findViewById(R.id.linechart3);
-        mPlayThree = (ImageButton) findViewById(R.id.play3);
-        mPlayThree.setOnClickListener(new View.OnClickListener(){
+        Picasso.with(this)
+                .load(imageUrl).resize(50,50)
+                .into(squareImageView);
 
-            @Override
-            public void onClick(View v) {
-                if(mUpdateThree)
-                    updateChart(2, mChartThree, mPlayThree);
-                else
-                    dismissChart(2, mChartThree, mPlayThree);
-                mUpdateThree = !mUpdateThree;
-            }
-        });*/
 
         showChart(0, mChartOne, mPlayOne);
         //showChart(1, mChartTwo, mPlayTwo);
@@ -146,9 +151,9 @@ public class DetailActivity extends AppCompatActivity {
             case 0:
                 produceOne(chart, action); break;
             case 1:
-                produceTwo(chart, action); break;
+                //produceTwo(chart, action); break;
             case 2:
-                produceThree(chart, action); break;
+                //produceThree(chart, action); break;
             default:
         }
     }
@@ -168,9 +173,9 @@ public class DetailActivity extends AppCompatActivity {
             case 0:
                 updateOne(chart); break;
             case 1:
-                updateTwo(chart); break;
+                //updateTwo(chart); break;
             case 2:
-                updateThree(chart); break;
+               // updateThree(chart); break;
             default:
         }
     }
@@ -202,9 +207,9 @@ public class DetailActivity extends AppCompatActivity {
             case 0:
                 dismissOne(chart, action); break;
             case 1:
-                dismissTwo(chart, action); break;
+                //dismissTwo(chart, action); break;
             case 2:
-                dismissThree(chart, action); break;
+                //dismissThree(chart, action); break;
             default:
         }
     }
@@ -248,8 +253,11 @@ public class DetailActivity extends AppCompatActivity {
     public void produceOne(LineChartView chart, Runnable action){
 
         LineSet dataset = new LineSet(mLabelsOne, mValuesOne[0]);
-        dataset.setColor(Color.parseColor("#a34545"))
-                .setFill(Color.parseColor("#a34545"))
+//        dataset.setColor(Color.parseColor("#a34545"))
+//                .setFill(Color.parseColor("#a34545"))
+//                .setSmooth(true);
+        dataset.setColor(Color.parseColor("#ffffff"))
+                .setFill(Color.parseColor("#ffffff"))
                 .setSmooth(true);
         chart.addData(dataset);
 
@@ -268,7 +276,8 @@ public class DetailActivity extends AppCompatActivity {
         chart.setBorderSpacing(Tools.fromDpToPx(0))
                 .setXLabels(AxisController.LabelPosition.INSIDE)
                 .setYLabels(AxisController.LabelPosition.NONE)
-                .setLabelsColor(Color.parseColor("#e08b36"))
+                //.setLabelsColor(Color.parseColor("#e08b36"))
+                .setLabelsColor(Color.parseColor("#1DE9B6"))
                 .setXAxis(false)
                 .setYAxis(false);
 
@@ -280,10 +289,9 @@ public class DetailActivity extends AppCompatActivity {
 
     public void updateOne(LineChartView chart){
 
-        float[][] newValues = {{3.5f, 4.7f, 4.3f, 8f, 6.5f, 10f, 7f, 8.3f, 7.0f, 7.3f, 5f},
-                {1f, 2f, 2f, 3.5f, 2f, 5f, 4.5f, 4.8f, 4.3f, 4.8f, 2.5f}};
-        chart.updateValues(1, newValues[0]);
-        chart.updateValues(2, newValues[1]);
+        float[][] newValues = {{3.5f, 4.7f, 4.3f, 8f, 6.5f, 10f, 7f, 8.3f, 7.0f, 7.3f, 5f}};
+        chart.updateValues(0, newValues[0]);
+        //chart.updateValues(2, newValues[1]);
         chart.notifyDataUpdate();
     }
 
@@ -297,7 +305,7 @@ public class DetailActivity extends AppCompatActivity {
      *
      * Chart 2
      *
-     */
+
 
     public void produceTwo(LineChartView chart, Runnable action){
 
@@ -344,14 +352,14 @@ public class DetailActivity extends AppCompatActivity {
     public static void dismissTwo(LineChartView chart, Runnable action){
         chart.dismiss(new Animation().setStartPoint(1, .5f).setEndAction(action));
     }
-
+     */
 
 
     /**
      *
      * Chart 3
      *
-     */
+
 
     public void produceThree(LineChartView chart, Runnable action){
 
@@ -425,6 +433,6 @@ public class DetailActivity extends AppCompatActivity {
 
         chart.dismissAllTooltips();
         chart.dismiss(new Animation().setEndAction(action));
-    }
+    } */
 
 }

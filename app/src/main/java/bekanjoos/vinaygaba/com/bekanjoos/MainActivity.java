@@ -15,6 +15,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
+import com.facebook.FacebookSdk;
 import com.facebook.login.LoginManager;
 
 import java.util.ArrayList;
@@ -42,6 +43,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        FacebookSdk.sdkInitialize(getApplicationContext());
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -214,6 +216,11 @@ public class MainActivity extends AppCompatActivity {
             Product product = productList.get(position);
 
             Intent intent = new Intent(context.getApplicationContext(),DetailActivity.class);
+            intent.putExtra("product_name",product.getProductName());
+            intent.putExtra("product_id",product.getProductId());
+            intent.putExtra("price",product.getPrice());
+            intent.putExtra("image",product.getImageUrl());
+            intent.putExtra("website",product.getWebsite());
             context.startActivity(intent);
 
 
