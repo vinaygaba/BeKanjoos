@@ -2,6 +2,7 @@ package bekanjoos.vinaygaba.com.bekanjoos;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -39,6 +40,7 @@ class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder> {
     // Provide a suitable constructor (depends on the kind of dataset)
     public CustomAdapter(ArrayList<Product> productList, Context context) {
         this.productList = productList;
+        Log.e("Adapter size",productList.size()+"");
         this.context = context;
         itemClickListener = new MainActivity.ItemClickListener(context);
     }
@@ -69,14 +71,14 @@ class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder> {
         // - get element from your dataset at this position
         // - replace the contents of the view with that element
 
-        holder.productName.setText(productList.get(position).getProductName());
+        holder.productName.setText(productList.get(position).getTitle());
         holder.price.setText(productList.get(position).getPrice());
-        holder.website.setText("on " + productList.get(position).getWebsite());
+        holder.website.setText("on " + productList.get(position).getSite());
         int resID = context.getResources().getIdentifier("test", "drawable", "bekanjoos.vinaygaba.com.bekanjoos");
         //holder.imageView.setImageResource(resID);
 
         Picasso.with(context)
-                .load(productList.get(position).getImageUrl())
+                .load(productList.get(position).getImage_url())
                 .resize(50, 50)
                 .into(holder.imageView);
     }

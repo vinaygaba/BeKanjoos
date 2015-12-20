@@ -1,6 +1,7 @@
 package bekanjoos.vinaygaba.com.bekanjoos;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
@@ -11,14 +12,19 @@ import android.support.v7.widget.Toolbar;
 import android.util.Base64;
 import android.util.Log;
 import android.view.View;
+import android.widget.Toast;
 
 import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
 import com.facebook.FacebookSdk;
+import com.facebook.GraphRequest;
+import com.facebook.GraphResponse;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
+
+import org.json.JSONObject;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -27,6 +33,9 @@ public class LoginActivity extends AppCompatActivity {
 
     CallbackManager callbackManager;
     LoginButton loginButton;
+    AccessToken accessToken;
+    SharedPreferences.Editor editor;
+    SharedPreferences prefs;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,6 +44,8 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        editor = getPreferences(MODE_PRIVATE).edit();
+        prefs = getPreferences(MODE_PRIVATE);
         setSupportActionBar(toolbar);
 
         callbackManager = CallbackManager.Factory.create();
@@ -51,6 +62,14 @@ public class LoginActivity extends AppCompatActivity {
         loginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
             @Override
             public void onSuccess(LoginResult loginResult) {
+                accessToken = loginResult.getAccessToken();
+                Log.e("ID",loginResult.getAccessToken().getApplicationId());
+                Toast.makeText(getApplicationContext(),loginResult.getAccessToken().getUserId(),Toast.LENGTH_LONG).show();
+
+                String id = prefs.getString("id", null);
+                if(id != null) {
+                    getUserDetails();
+                }
                 // App code
                 Intent intent = new Intent(LoginActivity.this,MainActivity.class);
                 startActivity(intent);
@@ -68,6 +87,38 @@ public class LoginActivity extends AppCompatActivity {
         });
 
 
+
+    }
+
+    private void getUserDetails() {
+
+        GraphRequest request = GraphRequest.newMeRequest(
+                accessToken,
+                new GraphRequest.GraphJSONObjectCallback() {
+                    @Override
+                    public void onCompleted(
+                            JSONObject object,
+                            GraphResponse response) {
+                        String id = "";
+                        String name = "";
+
+                        try {
+                            id = object.getString("id");
+                            name = object.getString("name");
+                        }
+                        catch (Exception e){
+
+                        }
+
+                        editor.putString("id", id);
+                        editor.putString("name", name);
+                        editor.apply();
+                    }
+                });
+        Bundle parameters = new Bundle();
+        parameters.putString("fields", "id,name,email");
+        request.setParameters(parameters);
+        request.executeAsync();
 
     }
 

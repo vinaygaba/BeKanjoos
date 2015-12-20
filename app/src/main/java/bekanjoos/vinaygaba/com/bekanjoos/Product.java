@@ -4,39 +4,51 @@ package bekanjoos.vinaygaba.com.bekanjoos;
  * Created by vinaygaba on 12/5/15.
  */
 public class Product {
-    String productName;
+    String title;
     String price;
-    String website;
-    String imageUrl;
-    String productId;
+    String site;
+
+    public String getPid() {
+        return pid;
+    }
+
+    public void setPid(String pid) {
+        this.pid = pid;
+    }
+
+    String url;
+    String image_url;
+    String pid;
 
 
-    public Product(String productName, String price, String website, String imageUrl) {
-        this.productName = productName;
+    public Product(String pid,String title, String price, String site, String url,String image_url) {
+        this.title = title;
         this.price = price;
-        this.website = website;
-        this.imageUrl = imageUrl;
+        this.site = site;
+        this.url = url;
+        this.image_url = image_url;
+        this.pid = pid;
     }
 
-    public Product(String productId) {
-        this.productId = productId;
+    public Product(String image_url) {
+        this.image_url = image_url;
     }
 
-    public String getProductId() {
-        return productId;
+    public String getImage_url() {
+        return image_url;
 
     }
 
-    public void setProductId(String productId) {
-        this.productId = productId;
+    public void setImage_url(String image_url) {
+        this.image_url = image_url;
     }
 
-    public String getProductName() {
-        return productName;
+    public String getTitle() {
+        return title;
     }
 
-    public void setProductName(String productName) {
-        this.productName = productName;
+    public void setTitle(String title) {
+        this.title = title;
     }
 
     public String getPrice() {
@@ -47,19 +59,19 @@ public class Product {
         this.price = price;
     }
 
-    public String getWebsite() {
-        return website;
+    public String getSite() {
+        return site;
     }
 
-    public void setWebsite(String website) {
-        this.website = website;
+    public void setSite(String site) {
+        this.site = site;
     }
 
-    public String getImageUrl() {
-        return imageUrl;
+    public String getUrl() {
+        return url;
     }
 
-    public void setImageUrl(String imageUrl) {
-        this.imageUrl = imageUrl;
+    public void setUrl(String url) {
+        this.url = url;
     }
 }

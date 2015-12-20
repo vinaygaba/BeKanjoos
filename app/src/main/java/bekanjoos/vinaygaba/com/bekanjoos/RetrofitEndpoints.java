@@ -8,6 +8,7 @@ import retrofit.http.Body;
 import retrofit.http.DELETE;
 import retrofit.http.GET;
 import retrofit.http.POST;
+import retrofit.http.Path;
 import retrofit.http.Query;
 
 /**
@@ -18,8 +19,8 @@ public interface RetrofitEndpoints {
     // Request method and URL specified in the annotation
     // Callback for the parsed response is the last parameter
 
-    @GET("/api/products")
-    Call<ArrayList<Product>> getProducts(@Query("email") String email);
+    @GET("/api/user/{fbid}/products")
+    Call<ArrayList<Product>> getProducts(@Path("fbid") String fbid);
 
     @POST("/api/product")
     Call<String> addProduct(@Body Product product);

@@ -42,6 +42,7 @@
             android:id="@+id/website"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_alignBaseline="@+id/price"
             android:layout_alignParentRight="true"
             android:padding="5dp"
             android:background="@drawable/tag_background"
@@ -54,11 +55,11 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/price"
-            android:layout_below="@+id/website"
+            android:layout_below="@+id/productName"
             android:layout_toRightOf="@+id/squareImageView"
             android:textColor="@color/priceColor"
             android:text="$ 49.99"
-            android:textSize="@dimen/productName"/>
+            android:textSize="@dimen/title"/>
 
     </RelativeLayout>
     </android.support.v7.widget.CardView>

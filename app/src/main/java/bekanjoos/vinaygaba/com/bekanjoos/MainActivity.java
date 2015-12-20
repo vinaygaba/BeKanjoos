@@ -2,7 +2,10 @@ package bekanjoos.vinaygaba.com.bekanjoos;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -17,20 +20,29 @@ import android.widget.Toast;
 
 import com.facebook.FacebookSdk;
 import com.facebook.login.LoginManager;
+import com.squareup.okhttp.Headers;
+import com.squareup.okhttp.MediaType;
+import com.squareup.okhttp.OkHttpClient;
+import com.squareup.okhttp.Request;
+import com.squareup.okhttp.RequestBody;
+import com.squareup.okhttp.Response;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import java.io.IOException;
 import java.util.ArrayList;
-import java.util.List;
 
 import retrofit.Call;
 import retrofit.Callback;
 import retrofit.GsonConverterFactory;
-import retrofit.Response;
 import retrofit.Retrofit;
+
 
 public class MainActivity extends AppCompatActivity {
 
     public static final String LOG_TAG = "MainActivity";
-    public static final String BASE_URL = "http://api.myservice.com";
+    public static final String BASE_URL = "http://api.bekanjoos.co";
     private static RecyclerView mRecyclerView;
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
@@ -38,6 +50,8 @@ public class MainActivity extends AppCompatActivity {
     static ArrayList<Product> productList;
     Retrofit retrofit;
     RetrofitEndpoints endpoint;
+    String id="";
+    SharedPreferences prefs;
 
 
     @Override
@@ -48,6 +62,8 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         mRecyclerView = (RecyclerView) findViewById(R.id.my_recycler_view);
+        prefs = getPreferences(MODE_PRIVATE);
+        id = prefs.getString("id", null);
         swipeRefreshLayout = (SwipeRefreshLayout)findViewById(R.id.swiperefresh);
         // use a linear layout manager
         mLayoutManager = new LinearLayoutManager(this);
@@ -55,10 +71,18 @@ public class MainActivity extends AppCompatActivity {
         productList = new ArrayList<Product>();
 
         //populate dummy product data
-        populateProducts();
+        //populateProducts();
         // specify an adapter (see also next example)
-        mAdapter = new CustomAdapter(productList,this);
+
+
+
+//        mAdapter.notifyDataSetChanged();
+
+
+        mAdapter = new CustomAdapter(productList,getApplicationContext());
         mRecyclerView.setAdapter(mAdapter);
+
+        loadProducts();
 
         //Swipe to Dismiss
         ItemTouchHelper.SimpleCallback simpleItemTouchCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
@@ -72,8 +96,9 @@ public class MainActivity extends AppCompatActivity {
             public void onSwiped(RecyclerView.ViewHolder viewHolder, int swipeDir) {
                 //Remove swiped item from list and notify the RecyclerView
                 Product product = new Product("id");
-                deleteProduct(product);
                 int position = viewHolder.getAdapterPosition();
+
+                deleteProduct(productList.get(position).getPid(),productList.get(position).getSite());
                 productList.remove(position);
                 mAdapter.notifyDataSetChanged();
             }
@@ -91,7 +116,8 @@ public class MainActivity extends AppCompatActivity {
         endpoint = retrofit.create(RetrofitEndpoints.class);
 
         //Load products
-        loadProducts();
+
+
 
 
         /*
@@ -116,14 +142,20 @@ public class MainActivity extends AppCompatActivity {
     /**
      * Method to load products from the API
      */
-    private void loadProducts() {
+    private void loadProductsRetrofit() {
+//        Log.e("Id",id);
 
-        Call<ArrayList<Product>> call = endpoint.getProducts("email_id");
+
+/*
+        Call<ArrayList<Product>> call = endpoint.getProducts("10153409653401025");
 
         call.enqueue(new Callback<ArrayList<Product>>() {
             @Override
             public void onResponse(Response<ArrayList<Product>> response, Retrofit retrofit) {
+                Log.e("Response",response.raw().toString());
+               // Log.e("Response",response.body().toString());
                 productList = response.body();
+//                Log.e("Product List Size",productList.size()+"");
                 mAdapter.notifyDataSetChanged();
                 swipeRefreshLayout.setRefreshing(false);
             }
@@ -133,17 +165,79 @@ public class MainActivity extends AppCompatActivity {
                 swipeRefreshLayout.setRefreshing(false);
 
             }
+        });*/
+
+
+    }
+
+    public void loadProducts(){
+
+        final ArrayList<Product> prodList = new ArrayList<Product>();
+        String url = BASE_URL + "/api/user/" + "10153409653401025/" + "products";
+        OkHttpClient client = new OkHttpClient();
+
+
+        Request request = new Request.Builder()
+                .url(url)
+                .build();
+
+        client.newCall(request).enqueue(new com.squareup.okhttp.Callback() {
+            @Override
+            public void onFailure(Request request, IOException e) {
+
+            }
+
+            @Override
+            public void onResponse(Response response) throws IOException {
+
+                try {
+                    JSONObject jsonObject = new JSONObject(response.body().string());
+
+                    JSONArray jsonArray = jsonObject.getJSONArray("products");
+
+                    for(int i=0; i<jsonArray.length();i++){
+                        JSONObject jObj = (JSONObject)jsonArray.get(i);
+                        Log.e("Title",jObj.get("title").toString());
+                        Product product = new Product(jObj.get("pid").toString(),jObj.get("title").toString(),jObj.get("price").toString(),jObj.get("site").toString(),jObj.get("url").toString(),jObj.get("image_url").toString());
+                        prodList.add(product);
+                    }
+
+                }
+                catch(Exception e){
+                    e.printStackTrace();
+                }
+                //Log.e("Response",response.body().string());
+
+                productList = prodList;
+
+
+                //Log.e("Size",productList.size()+"");
+                new Handler(Looper.getMainLooper()).post(new Runnable() {
+
+                    @Override
+                    public void run() {
+                        // your ui code here
+                        mAdapter = new CustomAdapter(productList,getApplicationContext());
+                        mRecyclerView.setAdapter(mAdapter);
+                        mAdapter.notifyDataSetChanged();
+                        swipeRefreshLayout.setRefreshing(false);
+                    }
+                });
+
+            }
         });
 
-        swipeRefreshLayout.setRefreshing(false);
+       // mAdapter.notifyDataSetChanged();
+
     }
 
     /**
      * Method to delete a product from a user's list
      * @param product
      */
-    private void deleteProduct(Product product) {
+    private void deleteProductRetrofit(Product product) {
 
+        /*
         Call<String> call = endpoint.deleteProduct("product_id");
         call.enqueue(new Callback<String>() {
             @Override
@@ -156,21 +250,47 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
+    */
 
+    }
 
+    private void deleteProduct(String product_id,String site){
+        String url = BASE_URL + "/api/user/" + "10153409653401025/" + "product";
+        OkHttpClient client = new OkHttpClient();
+        final MediaType JSON
+                = MediaType.parse("application/json; charset=utf-8");
+        String jsonString = "{\"site\":\"" +site+"\",\"product_id\":\"" + product_id+ "\""+ "}";
+        RequestBody requestBody = RequestBody.create(JSON,jsonString);
+
+        Request request = new Request.Builder()
+                .url(url)
+                .method("DELETE",requestBody)
+                .build();
+
+        client.newCall(request).enqueue(new com.squareup.okhttp.Callback() {
+            @Override
+            public void onFailure(Request request, IOException e) {
+                Log.e("Failure","Happened");
+            }
+
+            @Override
+            public void onResponse(Response response) throws IOException {
+                Log.e("Response",response.body().string());
+            }
+        });
     }
 
     private void populateProducts() {
 
-        Product p1 = new Product("Hill's Adult Oral Care","$21.59","Amazon","http://ecx.images-amazon.com/images/I/51jx7n5KIFL._SY300_.jpg");
-        Product p2 = new Product("Samsung Galaxy 5","Rs. 20,000","Flipkart","http://s.tmocache.com/content/dam/tmo/en-p/cell-phones/samsung-galaxy-s-5/charcoal-black/stills/carousel-samsung-galaxy-s-5-charcoal-black-380x380-1.jpg");
-        Product p3 = new Product("Sony Playstation 4","$ 349.99","BestBuy","http://cdn2.ubergizmo.com/wp-content/uploads/2015/06/sony-ps4-640x360.jpg");
-        Product p4 = new Product("Joe Black Wayfarer","$199","Amazon","http://stat.homeshop18.com/homeshop18/images/productImages/921/joe-black-unisex-wayfarer-sunglasses-black-medium_a832884383553c32ed3e25401a63c733.jpg");
+       // Product p1 = new Product("Hill's Adult Oral Care","$21.59","Amazon","http://ecx.images-amazon.com/images/I/51jx7n5KIFL._SY300_.jpg");
+       // Product p2 = new Product("Samsung Galaxy 5","Rs. 20,000","Flipkart","http://s.tmocache.com/content/dam/tmo/en-p/cell-phones/samsung-galaxy-s-5/charcoal-black/stills/carousel-samsung-galaxy-s-5-charcoal-black-380x380-1.jpg");
+       // Product p3 = new Product("Sony Playstation 4","$ 349.99","BestBuy","http://cdn2.ubergizmo.com/wp-content/uploads/2015/06/sony-ps4-640x360.jpg");
+       // Product p4 = new Product("Joe Black Wayfarer","$199","Amazon","http://stat.homeshop18.com/homeshop18/images/productImages/921/joe-black-unisex-wayfarer-sunglasses-black-medium_a832884383553c32ed3e25401a63c733.jpg");
 
-        productList.add(p1);
-        productList.add(p2);
-        productList.add(p3);
-        productList.add(p4);
+//        productList.add(p1);
+//        productList.add(p2);
+//        productList.add(p3);
+//        productList.add(p4);
     }
 
     @Override
@@ -216,11 +336,12 @@ public class MainActivity extends AppCompatActivity {
             Product product = productList.get(position);
 
             Intent intent = new Intent(context.getApplicationContext(),DetailActivity.class);
-            intent.putExtra("product_name",product.getProductName());
-            intent.putExtra("product_id",product.getProductId());
+            intent.putExtra("product_name",product.getTitle());
+            intent.putExtra("url",product.getUrl());
             intent.putExtra("price",product.getPrice());
-            intent.putExtra("image",product.getImageUrl());
-            intent.putExtra("website",product.getWebsite());
+            intent.putExtra("image",product.getImage_url());
+            intent.putExtra("website",product.getSite());
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             context.startActivity(intent);
 
 
