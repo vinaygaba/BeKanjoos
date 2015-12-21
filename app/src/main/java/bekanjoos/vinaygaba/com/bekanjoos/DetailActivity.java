@@ -36,7 +36,7 @@ public class DetailActivity extends AppCompatActivity {
     private boolean mUpdateOne;
     private final String[] mLabelsOne= {"", "10-15", "", "15-20", "", "20-25", "", "25-30", "", "30-35", ""};
     private final float[][] mValuesOne = {{3.5f, 4.7f, 4.3f, 8f, 6.5f, 10f, 7f, 8.3f, 7.0f, 7.3f, 5f}};
-    private String productName,url,website,price,imageUrl;
+    private String productName,url,website,price,imageUrl,id;
     private TextView productNameTv,priceTv,websiteTv;
     private ImageView squareImageView;
 
@@ -84,6 +84,7 @@ public class DetailActivity extends AppCompatActivity {
             website = extras.getString("website");
             Log.e("Website",website);
             url = extras.getString("url");
+            id = extras.getString("id");
         }
 
 

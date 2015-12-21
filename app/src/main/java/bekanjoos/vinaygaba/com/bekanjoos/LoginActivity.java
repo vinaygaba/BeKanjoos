@@ -44,8 +44,9 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        editor = getPreferences(MODE_PRIVATE).edit();
-        prefs = getPreferences(MODE_PRIVATE);
+        prefs = getSharedPreferences("BeKanjoos",MODE_PRIVATE);
+        editor = prefs.edit();
+
         setSupportActionBar(toolbar);
 
         callbackManager = CallbackManager.Factory.create();
@@ -63,16 +64,19 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onSuccess(LoginResult loginResult) {
                 accessToken = loginResult.getAccessToken();
-                Log.e("ID",loginResult.getAccessToken().getApplicationId());
+
                 Toast.makeText(getApplicationContext(),loginResult.getAccessToken().getUserId(),Toast.LENGTH_LONG).show();
 
-                String id = prefs.getString("id", null);
-                if(id != null) {
+                String id = prefs.getString("id","");
+                if(id.equals("")) {
+                    Log.e("Getting User Details","");
                     getUserDetails();
                 }
-                // App code
-                Intent intent = new Intent(LoginActivity.this,MainActivity.class);
-                startActivity(intent);
+                else{
+                    Intent intent = new Intent(LoginActivity.this,MainActivity.class);
+                    startActivity(intent);
+                }
+
             }
 
             @Override
@@ -104,6 +108,7 @@ public class LoginActivity extends AppCompatActivity {
 
                         try {
                             id = object.getString("id");
+                            Log.e("ID",id);
                             name = object.getString("name");
                         }
                         catch (Exception e){
@@ -112,7 +117,11 @@ public class LoginActivity extends AppCompatActivity {
 
                         editor.putString("id", id);
                         editor.putString("name", name);
-                        editor.apply();
+                        editor.commit();
+                        // App code
+                        Intent intent = new Intent(LoginActivity.this,MainActivity.class);
+                        startActivity(intent);
+
                     }
                 });
         Bundle parameters = new Bundle();
@@ -128,4 +137,8 @@ public class LoginActivity extends AppCompatActivity {
         callbackManager.onActivityResult(requestCode, resultCode, data);
     }
 
+    @Override
+    public void onBackPressed() {
+        //super.onBackPressed();
+    }
 }

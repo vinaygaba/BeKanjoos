@@ -38,11 +38,11 @@ class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder> {
     }
 
     // Provide a suitable constructor (depends on the kind of dataset)
-    public CustomAdapter(ArrayList<Product> productList, Context context) {
+    public CustomAdapter(ArrayList<Product> productList, Context context,String id) {
         this.productList = productList;
         Log.e("Adapter size",productList.size()+"");
         this.context = context;
-        itemClickListener = new MainActivity.ItemClickListener(context);
+        itemClickListener = new MainActivity.ItemClickListener(context,id);
     }
 
     // Create new views (invoked by the layout manager)

@@ -16,11 +16,11 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.facebook.FacebookSdk;
 import com.facebook.login.LoginManager;
-import com.squareup.okhttp.Headers;
 import com.squareup.okhttp.MediaType;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
@@ -32,9 +32,6 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.ArrayList;
-
-import retrofit.Call;
-import retrofit.Callback;
 import retrofit.GsonConverterFactory;
 import retrofit.Retrofit;
 
@@ -44,6 +41,7 @@ public class MainActivity extends AppCompatActivity {
     public static final String LOG_TAG = "MainActivity";
     public static final String BASE_URL = "http://api.bekanjoos.co";
     private static RecyclerView mRecyclerView;
+    ImageView emptyView;
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
     private SwipeRefreshLayout swipeRefreshLayout;
@@ -62,25 +60,19 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         mRecyclerView = (RecyclerView) findViewById(R.id.my_recycler_view);
-        prefs = getPreferences(MODE_PRIVATE);
-        id = prefs.getString("id", null);
+        prefs = getSharedPreferences("BeKanjoos",MODE_PRIVATE);
+        id = prefs.getString("id", "");
+        Log.e("id",id);
         swipeRefreshLayout = (SwipeRefreshLayout)findViewById(R.id.swiperefresh);
+        emptyView = (ImageView)findViewById(R.id.emptyView);
         // use a linear layout manager
         mLayoutManager = new LinearLayoutManager(this);
         mRecyclerView.setLayoutManager(mLayoutManager);
         productList = new ArrayList<Product>();
 
-        //populate dummy product data
-        //populateProducts();
-        // specify an adapter (see also next example)
-
-
-
-//        mAdapter.notifyDataSetChanged();
-
-
-        mAdapter = new CustomAdapter(productList,getApplicationContext());
+        mAdapter = new CustomAdapter(productList,getApplicationContext(),id);
         mRecyclerView.setAdapter(mAdapter);
+
 
         loadProducts();
 
@@ -114,11 +106,6 @@ public class MainActivity extends AppCompatActivity {
                 .build();
         // prepare call in Retrofit 2.0
         endpoint = retrofit.create(RetrofitEndpoints.class);
-
-        //Load products
-
-
-
 
         /*
         * Sets up a SwipeRefreshLayout.OnRefreshListener that is invoked when the user
@@ -173,7 +160,7 @@ public class MainActivity extends AppCompatActivity {
     public void loadProducts(){
 
         final ArrayList<Product> prodList = new ArrayList<Product>();
-        String url = BASE_URL + "/api/user/" + "10153409653401025/" + "products";
+        String url = BASE_URL + "/api/user/" + id + "/products";
         OkHttpClient client = new OkHttpClient();
 
 
@@ -211,15 +198,23 @@ public class MainActivity extends AppCompatActivity {
                 productList = prodList;
 
 
+
                 //Log.e("Size",productList.size()+"");
                 new Handler(Looper.getMainLooper()).post(new Runnable() {
 
                     @Override
                     public void run() {
                         // your ui code here
-                        mAdapter = new CustomAdapter(productList,getApplicationContext());
+                        mAdapter = new CustomAdapter(productList,getApplicationContext(),id);
                         mRecyclerView.setAdapter(mAdapter);
                         mAdapter.notifyDataSetChanged();
+                        if(productList.isEmpty()){
+                            mRecyclerView.setVisibility(View.GONE);
+                            emptyView.setVisibility(View.VISIBLE);
+                        } else{
+                            mRecyclerView.setVisibility(View.VISIBLE);
+                            emptyView.setVisibility(View.GONE);
+                        }
                         swipeRefreshLayout.setRefreshing(false);
                     }
                 });
@@ -255,7 +250,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void deleteProduct(String product_id,String site){
-        String url = BASE_URL + "/api/user/" + "10153409653401025/" + "product";
+        String url = BASE_URL + "/api/user/" + id + "/product";
         OkHttpClient client = new OkHttpClient();
         final MediaType JSON
                 = MediaType.parse("application/json; charset=utf-8");
@@ -324,9 +319,11 @@ public class MainActivity extends AppCompatActivity {
     public static class ItemClickListener implements View.OnClickListener{
 
         Context context;
+        String id;
 
-        ItemClickListener(Context context){
+        ItemClickListener(Context context,String id){
             this.context = context;
+            this.id = id;
         }
 
         @Override
@@ -336,6 +333,7 @@ public class MainActivity extends AppCompatActivity {
             Product product = productList.get(position);
 
             Intent intent = new Intent(context.getApplicationContext(),DetailActivity.class);
+            intent.putExtra("id",id);
             intent.putExtra("product_name",product.getTitle());
             intent.putExtra("url",product.getUrl());
             intent.putExtra("price",product.getPrice());
@@ -348,7 +346,10 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-
+    @Override
+    public void onBackPressed() {
+        //super.onBackPressed();
+    }
 }
 
 
