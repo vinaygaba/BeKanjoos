@@ -14,5 +14,6 @@
     <dimen name="productNameDetail">22dp</dimen>
     <dimen name="tagline">18dp</dimen>
     <dimen name="welcome">25dp</dimen>
-    <dimen name="loginButtonHeight">50dp</dimen>
+    <dimen name="bigMargin">30dp</dimen>
+
 </resources>

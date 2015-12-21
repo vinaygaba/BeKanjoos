@@ -17,6 +17,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.facebook.FacebookSdk;
@@ -34,6 +35,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import retrofit.GsonConverterFactory;
 import retrofit.Retrofit;
+import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -46,6 +48,7 @@ public class MainActivity extends AppCompatActivity {
     private RecyclerView.LayoutManager mLayoutManager;
     private SwipeRefreshLayout swipeRefreshLayout;
     static ArrayList<Product> productList;
+    TextView noProducts;
     Retrofit retrofit;
     RetrofitEndpoints endpoint;
     String id="";
@@ -65,6 +68,7 @@ public class MainActivity extends AppCompatActivity {
         Log.e("id",id);
         swipeRefreshLayout = (SwipeRefreshLayout)findViewById(R.id.swiperefresh);
         emptyView = (ImageView)findViewById(R.id.emptyView);
+        noProducts = (TextView)findViewById(R.id.noProducts);
         // use a linear layout manager
         mLayoutManager = new LinearLayoutManager(this);
         mRecyclerView.setLayoutManager(mLayoutManager);
@@ -93,6 +97,7 @@ public class MainActivity extends AppCompatActivity {
                 deleteProduct(productList.get(position).getPid(),productList.get(position).getSite());
                 productList.remove(position);
                 mAdapter.notifyDataSetChanged();
+                checkIfListEmpty();
             }
         };
 
@@ -171,6 +176,7 @@ public class MainActivity extends AppCompatActivity {
         client.newCall(request).enqueue(new com.squareup.okhttp.Callback() {
             @Override
             public void onFailure(Request request, IOException e) {
+                checkIfListEmpty();
 
             }
 
@@ -208,13 +214,7 @@ public class MainActivity extends AppCompatActivity {
                         mAdapter = new CustomAdapter(productList,getApplicationContext(),id);
                         mRecyclerView.setAdapter(mAdapter);
                         mAdapter.notifyDataSetChanged();
-                        if(productList.isEmpty()){
-                            mRecyclerView.setVisibility(View.GONE);
-                            emptyView.setVisibility(View.VISIBLE);
-                        } else{
-                            mRecyclerView.setVisibility(View.VISIBLE);
-                            emptyView.setVisibility(View.GONE);
-                        }
+                        checkIfListEmpty();
                         swipeRefreshLayout.setRefreshing(false);
                     }
                 });
@@ -266,11 +266,13 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onFailure(Request request, IOException e) {
                 Log.e("Failure","Happened");
+
             }
 
             @Override
             public void onResponse(Response response) throws IOException {
                 Log.e("Response",response.body().string());
+
             }
         });
     }
@@ -346,9 +348,28 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    public void checkIfListEmpty(){
+        if(productList.isEmpty()){
+            Log.e("Empty View","Visible");
+            mRecyclerView.setVisibility(View.GONE);
+            emptyView.setVisibility(View.VISIBLE);
+            noProducts.setVisibility(View.VISIBLE);
+        } else{
+            Log.e("Empty View","InVisible");
+            mRecyclerView.setVisibility(View.VISIBLE);
+            emptyView.setVisibility(View.GONE);
+            noProducts.setVisibility(View.GONE);
+        }
+
+    }
     @Override
     public void onBackPressed() {
         //super.onBackPressed();
+    }
+
+    @Override
+    protected void attachBaseContext(Context newBase) {
+        super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase));
     }
 }
 

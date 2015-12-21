@@ -1,6 +1,7 @@
 package bekanjoos.vinaygaba.com.bekanjoos;
 
 import android.animation.PropertyValuesHolder;
+import android.content.Context;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.os.Build;
@@ -26,6 +27,8 @@ import com.db.chart.view.Tooltip;
 import com.db.chart.view.animation.Animation;
 import com.db.chart.view.animation.style.DashAnimation;
 import com.squareup.picasso.Picasso;
+
+import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
 
 public class DetailActivity extends AppCompatActivity {
@@ -435,5 +438,10 @@ public class DetailActivity extends AppCompatActivity {
         chart.dismissAllTooltips();
         chart.dismiss(new Animation().setEndAction(action));
     } */
+
+    @Override
+    protected void attachBaseContext(Context newBase) {
+        super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase));
+    }
 
 }

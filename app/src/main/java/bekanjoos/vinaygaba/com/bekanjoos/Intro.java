@@ -1,5 +1,6 @@
 package bekanjoos.vinaygaba.com.bekanjoos;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
@@ -8,6 +9,8 @@ import android.support.annotation.Nullable;
 
 import com.github.paolorotolo.appintro.AppIntro;
 import com.github.paolorotolo.appintro.AppIntroFragment;
+
+import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
 /**
  * Created by vinaygaba on 12/20/15.
@@ -68,6 +71,11 @@ public class Intro extends AppIntro {
     @Override
     public void onSlideChanged() {
 
+    }
+
+    @Override
+    protected void attachBaseContext(Context newBase) {
+        super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase));
     }
 
 
