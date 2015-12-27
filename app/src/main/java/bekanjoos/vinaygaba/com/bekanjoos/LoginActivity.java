@@ -68,7 +68,7 @@ public class LoginActivity extends AppCompatActivity {
             public void onSuccess(LoginResult loginResult) {
                 accessToken = loginResult.getAccessToken();
 
-                Toast.makeText(getApplicationContext(),loginResult.getAccessToken().getUserId(),Toast.LENGTH_LONG).show();
+                //Toast.makeText(getApplicationContext(),loginResult.getAccessToken().getUserId(),Toast.LENGTH_LONG).show();
 
                 String id = prefs.getString("id","");
                 if(id.equals("")) {

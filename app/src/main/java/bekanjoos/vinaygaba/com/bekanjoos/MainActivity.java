@@ -331,7 +331,7 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onClick(View view) {
             int position = mRecyclerView.indexOfChild(view);
-            Toast.makeText(context,"Pos "+position,Toast.LENGTH_LONG).show();
+            //Toast.makeText(context,"Pos "+position,Toast.LENGTH_LONG).show();
             Product product = productList.get(position);
 
             Intent intent = new Intent(context.getApplicationContext(),DetailActivity.class);

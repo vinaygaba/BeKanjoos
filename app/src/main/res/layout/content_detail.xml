@@ -23,22 +23,31 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:padding="@dimen/activity_horizontal_margin">
-        <ImageView
+        <!--<ImageView
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:id="@+id/squareImageView"
             android:layout_alignParentLeft="true"
             android:layout_centerVertical="true"
+            />-->
+        <ImageView
+            android:id="@+id/squareImageView"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_alignParentRight="true"
+            android:layout_below="@+id/productName"
+            android:layout_margin="@dimen/activity_horizontal_margin"
             />
         <TextView
+            android:id="@+id/productName"
+            android:text="Hello"
+            android:textSize="@dimen/title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/productName"
-            android:text="Product Name"
-            android:textSize="@dimen/productNameDetail"
-            android:layout_toRightOf="@+id/squareImageView"/>
+            android:layout_margin="@dimen/activity_horizontal_margin"
+            android:textColor="@color/productColor"/>
 
-        <TextView
+        <!--<TextView
             android:id="@+id/website"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -49,17 +58,28 @@
             android:textSize="15sp"
             android:text="Amazon"
             android:textColor="@android:color/white"
-            />
-
+            />-->
         <TextView
+            android:id="@+id/website"
+            android:text="website"
+            android:textSize="@dimen/website"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/price"
             android:layout_below="@+id/productName"
-            android:layout_toRightOf="@+id/squareImageView"
+            android:layout_toRightOf="@+id/price"
+            android:textColor="@color/websiteColor"
+            android:layout_alignBaseline="@+id/price"/>
+
+        <TextView
+            android:id="@+id/price"
+            android:text="price"
+            android:textSize="@dimen/title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/productName"
+            android:layout_margin="@dimen/activity_horizontal_margin"
             android:textColor="@color/priceColor"
-            android:text="$ 49.99"
-            android:textSize="@dimen/title"/>
+            />
 
     </RelativeLayout>
     </android.support.v7.widget.CardView>
@@ -82,13 +102,13 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="end">
-                <ImageButton
+                <!--<ImageButton
                     android:id="@+id/play1"
                     android:layout_width="@dimen/card_toolbar_btn"
                     android:layout_height="@dimen/card_toolbar_btn"
                     android:paddingRight="5dp"
                     android:src="@drawable/play_chart"
-                    android:background="@android:color/transparent"/>
+                    android:background="@android:color/transparent"/>-->
             </RelativeLayout>
             <com.db.chart.view.LineChartView
                 xmlns:chart="http://schemas.android.com/apk/res-auto"

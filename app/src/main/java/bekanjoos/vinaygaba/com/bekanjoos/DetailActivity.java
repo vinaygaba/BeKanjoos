@@ -28,6 +28,9 @@ import com.db.chart.view.animation.Animation;
 import com.db.chart.view.animation.style.DashAnimation;
 import com.squareup.picasso.Picasso;
 
+import java.util.Arrays;
+import java.util.Random;
+
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
 
@@ -37,7 +40,8 @@ public class DetailActivity extends AppCompatActivity {
     private LineChartView mChartOne;
     private ImageButton mPlayOne;
     private boolean mUpdateOne;
-    private final String[] mLabelsOne= {"", "10-15", "", "15-20", "", "20-25", "", "25-30", "", "30-35", ""};
+    //private final String[] mLabelsOne= {"", "10-15", "", "15-20", "", "20-25", "", "25-30", "", "30-35", ""};
+    private final String[] mLabelsOne= new String[11];
     private final float[][] mValuesOne = {{3.5f, 4.7f, 4.3f, 8f, 6.5f, 10f, 7f, 8.3f, 7.0f, 7.3f, 5f}};
     private String productName,url,website,price,imageUrl,id;
     private TextView productNameTv,priceTv,websiteTv;
@@ -94,18 +98,18 @@ public class DetailActivity extends AppCompatActivity {
         // Init first chart
         mUpdateOne = true;
         mChartOne = (LineChartView) findViewById(R.id.linechart1);
-        mPlayOne = (ImageButton) findViewById(R.id.play1);
-        mPlayOne.setOnClickListener(new View.OnClickListener(){
-
-            @Override
-            public void onClick(View v) {
-                if(mUpdateOne)
-                    updateChart(0, mChartOne, mPlayOne);
-                else
-                    dismissChart(0, mChartOne, mPlayOne);
-                mUpdateOne = !mUpdateOne;
-            }
-        });
+//        mPlayOne = (ImageButton) findViewById(R.id.play1);
+//        mPlayOne.setOnClickListener(new View.OnClickListener(){
+//
+//            @Override
+//            public void onClick(View v) {
+//                if(mUpdateOne)
+//                    updateChart(0, mChartOne, mPlayOne);
+//                else
+//                    dismissChart(0, mChartOne, mPlayOne);
+//                mUpdateOne = !mUpdateOne;
+//            }
+//        });
 
         productNameTv = (TextView)findViewById(R.id.productName);
         priceTv = (TextView)findViewById(R.id.price);
@@ -114,7 +118,9 @@ public class DetailActivity extends AppCompatActivity {
 
         productNameTv.setText(productName);
         priceTv.setText(price);
-        websiteTv.setText(website);
+        websiteTv.setText("on "+website);
+
+        generateChartDummyValues();
 
         Picasso.with(this)
                 .load(imageUrl).resize(50,50)
@@ -128,7 +134,43 @@ public class DetailActivity extends AppCompatActivity {
 
     }
 
+    private void generateChartDummyValues() {
+        mLabelsOne[0]="";
+        String parsedPrice = price.replaceAll("[^\\d]+", "");
+        int priceInt = Integer.parseInt(parsedPrice);
+        for(int i=1;i<10;i++){
+            mLabelsOne[i] = String.valueOf(randInt(priceInt-(int)(priceInt * .1),priceInt)+(int)(priceInt * .1));
+        }
+        mLabelsOne[10]="";
 
+        //Arrays.sort(mLabelsOne,1,10);
+    }
+
+    public static void shuffle(){
+        Random random = new Random();
+
+        for(int i=9;i>0;i--){
+            int j= random.nextInt(i);
+            //swap()
+        }
+    }
+
+    public static int randInt(int min, int max) {
+
+        // NOTE: This will (intentionally) not run as written so that folks
+        // copy-pasting have to think about how to initialize their
+        // Random instance.  Initialization of the Random instance is outside
+        // the main scope of the question, but some decent options are to have
+        // a field that is initialized once and then re-used as needed or to
+        // use ThreadLocalRandom (if using at least Java 1.7).
+        Random rand = new Random();
+
+        // nextInt is normally exclusive of the top value,
+        // so add 1 to make it inclusive
+        int randomNum = rand.nextInt((max - min) + 1) + min;
+
+        return randomNum;
+    }
 
 
     /**
@@ -225,11 +267,11 @@ public class DetailActivity extends AppCompatActivity {
      */
     private void showPlay(ImageButton btn){
 
-        btn.setEnabled(true);
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH)
-            btn.animate().alpha(1).scaleX(1).scaleY(1);
-        else
-            btn.setVisibility(View.VISIBLE);
+//        btn.setEnabled(true);
+//        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH)
+//            btn.animate().alpha(1).scaleX(1).scaleY(1);
+//        else
+//            btn.setVisibility(View.VISIBLE);
     }
 
 
@@ -239,11 +281,11 @@ public class DetailActivity extends AppCompatActivity {
      */
     private void dismissPlay(ImageButton btn){
 
-        btn.setEnabled(false);
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH)
-            btn.animate().alpha(0).scaleX(0).scaleY(0);
-        else
-            btn.setVisibility(View.INVISIBLE);
+//        btn.setEnabled(false);
+//        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH)
+//            btn.animate().alpha(0).scaleX(0).scaleY(0);
+//        else
+//            btn.setVisibility(View.INVISIBLE);
     }
 
 
